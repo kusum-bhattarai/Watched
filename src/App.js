@@ -1,24 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import CustomNavbar from './components/navbar';
+import Home from './pages/home';
+import ComfortMovies from './pages/comfortMovies';
+import ComfortSeries from './pages/comfortSeries';
+import Binge from './pages/binge';
+import AddNew from './pages/addNew';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <CustomNavbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/comfort-movies" element={<ComfortMovies />} />
+        <Route path="/comfort-series" element={<ComfortSeries />} />
+        <Route path="/binge" element={<Binge />} />
+        <Route path="/add-new" element={<AddNew />} />
+      </Routes>
+    </Router>
   );
 }
 
