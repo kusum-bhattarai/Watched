@@ -7,13 +7,22 @@ const ComfortMovies = () => {
 
   useEffect(() => {
     const storedMovies = JSON.parse(localStorage.getItem('movies')) || [];
-    setMovies(storedMovies);
+    const filteredMovies = storedMovies.filter(movie => movie.category === 'comfort-movies');
+    setMovies(filteredMovies);
   }, []);
+
+  const handleRemove = (id) => {
+    const updatedMovies = movies.filter(movie => movie.id !== id);
+    setMovies(updatedMovies);
+    const allMovies = JSON.parse(localStorage.getItem('movies')) || [];
+    const newAllMovies = allMovies.filter(movie => movie.id !== id);
+    localStorage.setItem('movies', JSON.stringify(newAllMovies));
+  };
 
   return (
     <Container className="mt-5">
       <h2>Comfort Movies</h2>
-      <MovieList movies={movies} />
+      <MovieList movies={movies} onRemove={handleRemove} />
     </Container>
   );
 };

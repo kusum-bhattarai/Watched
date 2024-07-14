@@ -10,9 +10,60 @@ body {
   
   .card {
     background-color: #333 !important;
+    border: none;
+    position: relative;
   }
   
   .navbar-dark .navbar-nav .nav-link {
     color: rgba(255, 255, 255, 0.55);
+  }
+  
+  .card-img-top {
+    object-fit: cover;
+    height: 250px; /* Set height for Netflix-like posters */
+    width: 100%;
+  }
+  
+  .movie-thumbnail {
+    object-fit: cover;
+    height: 92px;
+    width: 92px;
+  }
+  
+  .movie-poster {
+    object-fit: cover;
+    height: 250px; /* Set height for Netflix-like posters */
+    width: 100%;
+  }
+  
+  .movie-card {
+    margin: 5px; /* Add margin to space out the posters */
+    position: relative;
+  }
+  
+  .movie-list-row {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  
+  .delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+    display: none;
+  }
+  
+  .movie-card:hover .delete-btn {
+    display: block;
+  }
+  
+  .swipe-arrow {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    z-index: 1;
   }
   
