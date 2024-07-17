@@ -5,11 +5,29 @@ import { Container, Card } from 'react-bootstrap';
 const MovieDetails = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState(null);
+  const [providers, setProviders] = useState(null);
 
   useEffect(() => {
-    const movies = JSON.parse(localStorage.getItem('movies')) || [];
-    const foundMovie = movies.find(movie => movie.id === parseInt(id));
-    setMovie(foundMovie);
+    const fetchMovieDetails = async () => {
+      const apiKey = process.env.REACT_APP_TMDB_API_KEY;
+      const movieUrl = `https://api.themoviedb.org/3/movie/${id}?api_key=${apiKey}`;
+      const providersUrl = `https://api.themoviedb.org/3/movie/${id}/watch/providers?api_key=${apiKey}`;
+
+      try {
+        const [movieResponse, providersResponse] = await Promise.all([fetch(movieUrl), fetch(providersUrl)]);
+        if (!movieResponse.ok || !providersResponse.ok) {
+          throw new Error(`HTTP error! status: ${movieResponse.status} ${providersResponse.status}`);
+        }
+        const movieData = await movieResponse.json();
+        const providersData = await providersResponse.json();
+        setMovie(movieData);
+        setProviders(providersData.results);
+      } catch (err) {
+        console.error('Fetch error:', err);
+      }
+    };
+
+    fetchMovieDetails();
   }, [id]);
 
   if (!movie) {
@@ -29,10 +47,16 @@ const MovieDetails = () => {
           />
         )}
         <Card.Body>
-          <Card.Title>{movie.title || movie.name}</Card.Title>
+        <Card.Title>{movie.title || movie.name}</Card.Title>
           {movie.vote_average && <Card.Text>Rating: {movie.vote_average}</Card.Text>}
+          {movie.overview && <Card.Text>Description: {movie.overview}</Card.Text>}
           {movie.rating && <Card.Text>Your Rating: {movie.rating}</Card.Text>}
           {movie.review && <Card.Text>Your Review: {movie.review}</Card.Text>}
+          {providers && providers.US && providers.US.flatrate && (
+             <Card.Text>
+             Available on: {providers.US.flatrate.map(provider => provider.provider_name).join(', ')}
+           </Card.Text>
+         )}
         </Card.Body>
       </Card>
     </Container>
