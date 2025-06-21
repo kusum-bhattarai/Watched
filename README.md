@@ -18,7 +18,7 @@ To try it out on your own device:
 1. Clone the repository:
    ```bash
    git clone https://github.com/kusum-bhattarai/Watched/ 
-   cd movie-explorer-app
+   cd Watched
    ```
 
 2. Install dependencies:
