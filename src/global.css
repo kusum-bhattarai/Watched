@@ -39,6 +39,10 @@ body {
     margin: 5px;
     position: relative;
   }
+
+  .card-image-container {
+    position: relative;
+  }
   
   .movie-list-row {
     display: flex;
@@ -66,3 +70,38 @@ body {
     z-index: 1;
   }
   
+  .providers-container {
+    margin-top: 20px;
+  }
+  
+  .providers-list {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .provider-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    object-fit: cover;
+    cursor: pointer;
+  }
+
+  /* New styles for MovieDetails component */
+  .movie-details-card {
+    background-color: #1e1e1e !important;
+  }
+  
+  .movie-poster-large {
+    width: 100%;
+    height: auto;
+    max-width: 300px; 
+    border-radius: 10px;
+  }
+
+  .details-title {
+    font-size: 2.5em;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
