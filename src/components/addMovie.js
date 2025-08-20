@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Alert, ListGroup, Image } from 'react-bootstrap';
 
 const AddMovie = () => {
@@ -8,6 +8,14 @@ const AddMovie = () => {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [customDetails, setCustomDetails] = useState({ rating: '', review: '' });
   const [error, setError] = useState('');
+  const [existingCategories, setExistingCategories] = useState([]);
+
+  // Fetch existing categories from localStorage on component load
+  useEffect(() => {
+    const storedMovies = JSON.parse(localStorage.getItem('movies')) || [];
+    const categories = [...new Set(storedMovies.map(movie => movie.category).filter(Boolean))];
+    setExistingCategories(categories);
+  }, []);
 
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.REACT_APP_TMDB_API_KEY;
@@ -26,7 +34,7 @@ const AddMovie = () => {
       }
       const movieData = await movieResponse.json();
       const tvData = await tvResponse.json();
-      setSuggestions([...movieData.results, ...tvData.results]);
+      setSuggestions([...movieData.results.map(r => ({...r, media_type: 'movie'})), ...tvData.results.map(r => ({...r, media_type: 'tv'}))]);
     } catch (err) {
       console.error('Fetch error:', err);
       setError('An error occurred while fetching suggestions');
@@ -50,6 +58,10 @@ const AddMovie = () => {
   };
 
   const handleAdd = () => {
+    if (!title) {
+        setError('Please select a movie/series from the suggestions.');
+        return;
+    }
     const movie = selectedMovie ? { ...selectedMovie, ...customDetails, category } : { title, ...customDetails, category };
     const movies = JSON.parse(localStorage.getItem('movies')) || [];
     movies.push(movie);
@@ -82,7 +94,7 @@ const AddMovie = () => {
                     thumbnail
                     className="movie-thumbnail"
                   />
-                  {movie.title || movie.name} {/* Use name for TV series */}
+                  {movie.title || movie.name} ({movie.media_type === 'movie' ? 'Movie' : 'Series'})
                 </ListGroup.Item>
               ))}
             </ListGroup>
@@ -96,10 +108,19 @@ const AddMovie = () => {
             onChange={(e) => setCategory(e.target.value)}
           >
             <option value="">None</option>
-            <option value="comfort-movies">Comfort Movies</option>
-            <option value="comfort-series">Comfort Series</option>
-            <option value="binge">Binge Worthy</option>
+            {existingCategories.map(cat => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
           </Form.Control>
+          <Form.Text className="text-muted">
+            Or type a new category:
+          </Form.Text>
+          <Form.Control
+            type="text"
+            placeholder="e.g. Action-Adventure"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          />
         </Form.Group>
         <Form.Group controlId="formMovieRating">
           <Form.Label>Rating</Form.Label>
