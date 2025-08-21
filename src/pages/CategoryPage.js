@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import MovieList from '../components/movieList';
 
-const ComfortSeries = () => {
+const CategoryPage = () => {
+  const { categoryName } = useParams();
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
     const storedMovies = JSON.parse(localStorage.getItem('movies')) || [];
-    const filteredMovies = storedMovies.filter(movie => movie.category === 'comfort-series');
+    const filteredMovies = storedMovies.filter(movie => movie.category === categoryName);
     setMovies(filteredMovies);
-  }, []);
+  }, [categoryName]);
 
   const handleRemove = (id) => {
     const updatedMovies = movies.filter(movie => movie.id !== id);
@@ -21,10 +23,10 @@ const ComfortSeries = () => {
 
   return (
     <Container className="mt-5">
-      <h2>Comfort Series</h2>
+      <h2>{decodeURIComponent(categoryName)}</h2>
       <MovieList movies={movies} onRemove={handleRemove} />
     </Container>
   );
 };
 
-export default ComfortSeries;
+export default CategoryPage;

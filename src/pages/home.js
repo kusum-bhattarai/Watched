@@ -7,24 +7,25 @@ const Home = () => {
   const [series, setSeries] = useState([]);
 
   useEffect(() => {
-    const storedMovies = JSON.parse(localStorage.getItem('movies')) || [];
-    const filteredMovies = storedMovies.filter(item => item.title);
-    const filteredSeries = storedMovies.filter(item => item.name);
+    const storedItems = JSON.parse(localStorage.getItem('movies')) || [];
+    const filteredMovies = storedItems.filter(item => item.media_type === 'movie');
+    const filteredSeries = storedItems.filter(item => item.media_type === 'tv');
     setMovies(filteredMovies);
     setSeries(filteredSeries);
   }, []);
 
   const handleRemove = (id) => {
-    const updatedMovies = movies.filter(movie => movie.id !== id);
-    const updatedSeries = series.filter(show => show.id !== id);
-    setMovies(updatedMovies);
-    setSeries(updatedSeries);
-    const allItems = [...updatedMovies, ...updatedSeries];
-    localStorage.setItem('movies', JSON.stringify(allItems));
+    const allItems = JSON.parse(localStorage.getItem('movies')) || [];
+    const newAllItems = allItems.filter(item => item.id !== id);
+    localStorage.setItem('movies', JSON.stringify(newAllItems));
+
+    // Update the state to reflect the change
+    setMovies(newAllItems.filter(item => item.media_type === 'movie'));
+    setSeries(newAllItems.filter(item => item.media_type === 'tv'));
   };
 
   return (
-    <Container className="mt-5">
+    <Container className="content-container">
       <h2>Movies</h2>
       <MovieList movies={movies} onRemove={handleRemove} />
       <h2>Series</h2>

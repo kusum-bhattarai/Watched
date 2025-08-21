@@ -1,24 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CustomNavbar from './components/navbar';
 import Home from './pages/home';
-import ComfortMovies from './pages/comfortMovies';
-import ComfortSeries from './pages/comfortSeries';
-import Binge from './pages/binge';
 import AddNew from './pages/addNew';
 import MovieDetails from './components/movieDetails';
+import CategoryPage from './pages/CategoryPage';
 
 function App() {
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleAddSuccess = () => {
+    setRefreshKey(prevKey => prevKey + 1);
+  };
+
   return (
     <Router>
-      <CustomNavbar />
+      <CustomNavbar key={refreshKey} />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/comfort-movies" element={<ComfortMovies />} />
-        <Route path="/comfort-series" element={<ComfortSeries />} />
-        <Route path="/binge" element={<Binge />} />
-        <Route path="/add-new" element={<AddNew />} />
+        <Route path="/add-new" element={<AddNew onAddSuccess={handleAddSuccess} />} />
         <Route path="/details/:id" element={<MovieDetails />} />
+        <Route path="/category/:categoryName" element={<CategoryPage />} />
       </Routes>
     </Router>
   );
