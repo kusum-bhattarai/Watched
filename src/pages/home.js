@@ -25,7 +25,7 @@ const Home = () => {
   };
 
   return (
-    <Container className="mt-5">
+    <Container className="content-container">
       <h2>Movies</h2>
       <MovieList movies={movies} onRemove={handleRemove} />
       <h2>Series</h2>

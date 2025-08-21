@@ -1,7 +1,6 @@
 import React from 'react';
-import { Row, Col, Button } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import MovieCard from './movieCard';
-import { FaArrowRight } from 'react-icons/fa';
 
 const MovieList = ({ movies, onRemove }) => {
   return (
@@ -13,9 +12,6 @@ const MovieList = ({ movies, onRemove }) => {
           </Col>
         ))}
       </Row>
-      <Button variant="light" className="swipe-arrow">
-        <FaArrowRight />
-      </Button>
     </div>
   );
 };

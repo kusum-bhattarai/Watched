@@ -68,24 +68,22 @@ const AddMovie = ({ onAddSuccess }) => {
         setError('Please select a movie/series from the suggestions.');
         return;
     }
-    if (!category) {
-        setError('Please select or type a category.');
-        return;
+
+    const movie = { ...selectedMovie, ...customDetails };
+    if (category && category.toLowerCase() !== 'none') {
+        movie.category = category;
     }
 
-    const movie = { ...selectedMovie, ...customDetails, category };
     const movies = JSON.parse(localStorage.getItem('movies')) || [];
     movies.push(movie);
     localStorage.setItem('movies', JSON.stringify(movies));
     
-    // Clear form fields
     setTitle('');
     setCategory('');
     setSelectedMovie(null);
     setCustomDetails({ rating: '', review: '' });
     setError('');
 
-    // Trigger the success callback
     if (onAddSuccess) {
       onAddSuccess();
     }

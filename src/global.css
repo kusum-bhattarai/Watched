@@ -12,10 +12,27 @@ body {
     background-color: #333 !important;
     border: none;
     position: relative;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+
+  .card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
   }
   
   .navbar-dark .navbar-nav .nav-link {
-    color: rgba(255, 255, 255, 0.55);
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.2s;
+  }
+  
+  .navbar-dark .navbar-nav .nav-link:hover {
+    color: #fff;
+  }
+
+  .active-link {
+    color: #ffffff !important;
+    font-weight: bold;
+    border-bottom: 2px solid #90caf9;
   }
   
   .card-img-top {
@@ -32,22 +49,58 @@ body {
   
   .movie-poster {
     object-fit: cover;
-    height: 250px; 
+    height: 250px;
   }
   
   .movie-card {
     margin: 5px;
     position: relative;
+    border-radius: 10px;
+    overflow: hidden;
   }
 
   .card-image-container {
     position: relative;
   }
   
+  .card-title-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+  }
+
+  .overlay-text {
+    margin-bottom: 0;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
   .movie-list-row {
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
+    padding-bottom: 20px;
+  }
+
+  .movie-list-row::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .movie-list-row::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 3px;
+  }
+
+  .movie-list-row::-webkit-scrollbar-track {
+    background: #222;
+    border-radius: 3px;
   }
   
   .delete-btn {
@@ -56,18 +109,12 @@ body {
     right: 10px;
     z-index: 1;
     display: none;
+    background-color: rgba(220, 53, 69, 0.8) !important;
+    border: none;
   }
   
   .movie-card:hover .delete-btn {
     display: block;
-  }
-  
-  .swipe-arrow {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-    z-index: 1;
   }
   
   .providers-container {
@@ -86,11 +133,17 @@ body {
     border-radius: 5px;
     object-fit: cover;
     cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
   }
 
-  /* New styles for MovieDetails component */
+  .provider-logo:hover {
+    transform: scale(1.1);
+  }
+
   .movie-details-card {
     background-color: #1e1e1e !important;
+    border-radius: 15px;
   }
   
   .movie-poster-large {
@@ -98,10 +151,25 @@ body {
     height: auto;
     max-width: 300px; 
     border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
   }
 
   .details-title {
     font-size: 2.5em;
     font-weight: bold;
     margin-bottom: 10px;
+  }
+
+  .content-container {
+    padding-top: 5px;
+    padding-bottom: 30px;
+  }
+
+  h2 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .movie-list-container {
+    margin-bottom: 2rem;
   }
