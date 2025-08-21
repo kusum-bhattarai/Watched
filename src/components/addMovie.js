@@ -1,18 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Alert, ListGroup, Image } from 'react-bootstrap';
 
-const AddMovie = () => {
+const AddMovie = ({ onAddSuccess }) => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [customDetails, setCustomDetails] = useState({ rating: '', review: '' });
   const [error, setError] = useState('');
+  const [existingCategories, setExistingCategories] = useState([]);
+
+  useEffect(() => {
+    const updateCategories = () => {
+      const storedMovies = JSON.parse(localStorage.getItem('movies')) || [];
+      const categories = [...new Set(storedMovies.map(movie => movie.category).filter(Boolean))];
+      setExistingCategories(categories);
+    };
+
+    updateCategories();
+    window.addEventListener('storage', updateCategories);
+    return () => {
+      window.removeEventListener('storage', updateCategories);
+    };
+  }, []);
 
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.REACT_APP_TMDB_API_KEY;
     if (!apiKey) {
-      console.error("API Key is missing!");
       setError("API Key is missing!");
       return;
     }
@@ -26,7 +40,7 @@ const AddMovie = () => {
       }
       const movieData = await movieResponse.json();
       const tvData = await tvResponse.json();
-      setSuggestions([...movieData.results, ...tvData.results]);
+      setSuggestions([...movieData.results.map(r => ({...r, media_type: 'movie'})), ...tvData.results.map(r => ({...r, media_type: 'tv'}))]);
     } catch (err) {
       console.error('Fetch error:', err);
       setError('An error occurred while fetching suggestions');
@@ -46,19 +60,33 @@ const AddMovie = () => {
   const handleSelectMovie = (movie) => {
     setSelectedMovie(movie);
     setSuggestions([]);
-    setTitle(movie.title || movie.name); // Use name for TV series
+    setTitle(movie.title || movie.name);
   };
 
   const handleAdd = () => {
-    const movie = selectedMovie ? { ...selectedMovie, ...customDetails, category } : { title, ...customDetails, category };
+    if (!title || !selectedMovie) {
+        setError('Please select a movie/series from the suggestions.');
+        return;
+    }
+
+    const movie = { ...selectedMovie, ...customDetails };
+    if (category && category.toLowerCase() !== 'none') {
+        movie.category = category;
+    }
+
     const movies = JSON.parse(localStorage.getItem('movies')) || [];
     movies.push(movie);
     localStorage.setItem('movies', JSON.stringify(movies));
+    
     setTitle('');
     setCategory('');
     setSelectedMovie(null);
     setCustomDetails({ rating: '', review: '' });
     setError('');
+
+    if (onAddSuccess) {
+      onAddSuccess();
+    }
   };
 
   return (
@@ -68,7 +96,7 @@ const AddMovie = () => {
           <Form.Label>Movie/Series Title</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Enter title"
+            placeholder="Search for a movie or series"
             value={title}
             onChange={handleTitleChange}
           />
@@ -82,7 +110,7 @@ const AddMovie = () => {
                     thumbnail
                     className="movie-thumbnail"
                   />
-                  {movie.title || movie.name} {/* Use name for TV series */}
+                  <div className="ms-3">{movie.title || movie.name} ({movie.media_type === 'movie' ? 'Movie' : 'Series'})</div>
                 </ListGroup.Item>
               ))}
             </ListGroup>
@@ -91,15 +119,17 @@ const AddMovie = () => {
         <Form.Group controlId="formMovieCategory">
           <Form.Label>Category</Form.Label>
           <Form.Control
-            as="select"
+            type="text"
+            placeholder="Enter or select a category"
+            list="category-options"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="">None</option>
-            <option value="comfort-movies">Comfort Movies</option>
-            <option value="comfort-series">Comfort Series</option>
-            <option value="binge">Binge Worthy</option>
-          </Form.Control>
+          />
+          <datalist id="category-options">
+            {existingCategories.map(cat => (
+              <option key={cat} value={cat} />
+            ))}
+          </datalist>
         </Form.Group>
         <Form.Group controlId="formMovieRating">
           <Form.Label>Rating</Form.Label>
