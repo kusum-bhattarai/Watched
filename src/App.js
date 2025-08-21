@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import CustomNavbar from './components/navbar';
 import Home from './pages/home';
@@ -7,14 +7,20 @@ import MovieDetails from './components/movieDetails';
 import CategoryPage from './pages/CategoryPage';
 
 function App() {
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleAddSuccess = () => {
+    setRefreshKey(prevKey => prevKey + 1);
+  };
+
   return (
     <Router>
-      <CustomNavbar />
+      <CustomNavbar key={refreshKey} />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/add-new" element={<AddNew />} />
+        <Route path="/add-new" element={<AddNew onAddSuccess={handleAddSuccess} />} />
         <Route path="/details/:id" element={<MovieDetails />} />
-        <Route path="/Category/:categoryName" element={<CategoryPage />} />
+        <Route path="/category/:categoryName" element={<CategoryPage />} />
       </Routes>
     </Router>
   );

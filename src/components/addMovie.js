@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Alert, ListGroup, Image } from 'react-bootstrap';
 
-const AddMovie = () => {
+const AddMovie = ({ onAddSuccess }) => {
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
   const [suggestions, setSuggestions] = useState([]);
@@ -10,17 +10,23 @@ const AddMovie = () => {
   const [error, setError] = useState('');
   const [existingCategories, setExistingCategories] = useState([]);
 
-  // Fetch existing categories from localStorage on component load
   useEffect(() => {
-    const storedMovies = JSON.parse(localStorage.getItem('movies')) || [];
-    const categories = [...new Set(storedMovies.map(movie => movie.category).filter(Boolean))];
-    setExistingCategories(categories);
+    const updateCategories = () => {
+      const storedMovies = JSON.parse(localStorage.getItem('movies')) || [];
+      const categories = [...new Set(storedMovies.map(movie => movie.category).filter(Boolean))];
+      setExistingCategories(categories);
+    };
+
+    updateCategories();
+    window.addEventListener('storage', updateCategories);
+    return () => {
+      window.removeEventListener('storage', updateCategories);
+    };
   }, []);
 
   const fetchSuggestions = async (query) => {
     const apiKey = process.env.REACT_APP_TMDB_API_KEY;
     if (!apiKey) {
-      console.error("API Key is missing!");
       setError("API Key is missing!");
       return;
     }
@@ -54,23 +60,35 @@ const AddMovie = () => {
   const handleSelectMovie = (movie) => {
     setSelectedMovie(movie);
     setSuggestions([]);
-    setTitle(movie.title || movie.name); // Use name for TV series
+    setTitle(movie.title || movie.name);
   };
 
   const handleAdd = () => {
-    if (!title) {
+    if (!title || !selectedMovie) {
         setError('Please select a movie/series from the suggestions.');
         return;
     }
-    const movie = selectedMovie ? { ...selectedMovie, ...customDetails, category } : { title, ...customDetails, category };
+    if (!category) {
+        setError('Please select or type a category.');
+        return;
+    }
+
+    const movie = { ...selectedMovie, ...customDetails, category };
     const movies = JSON.parse(localStorage.getItem('movies')) || [];
     movies.push(movie);
     localStorage.setItem('movies', JSON.stringify(movies));
+    
+    // Clear form fields
     setTitle('');
     setCategory('');
     setSelectedMovie(null);
     setCustomDetails({ rating: '', review: '' });
     setError('');
+
+    // Trigger the success callback
+    if (onAddSuccess) {
+      onAddSuccess();
+    }
   };
 
   return (
@@ -80,7 +98,7 @@ const AddMovie = () => {
           <Form.Label>Movie/Series Title</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Enter title"
+            placeholder="Search for a movie or series"
             value={title}
             onChange={handleTitleChange}
           />
@@ -94,7 +112,7 @@ const AddMovie = () => {
                     thumbnail
                     className="movie-thumbnail"
                   />
-                  {movie.title || movie.name} ({movie.media_type === 'movie' ? 'Movie' : 'Series'})
+                  <div className="ms-3">{movie.title || movie.name} ({movie.media_type === 'movie' ? 'Movie' : 'Series'})</div>
                 </ListGroup.Item>
               ))}
             </ListGroup>
@@ -103,24 +121,17 @@ const AddMovie = () => {
         <Form.Group controlId="formMovieCategory">
           <Form.Label>Category</Form.Label>
           <Form.Control
-            as="select"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="">None</option>
-            {existingCategories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </Form.Control>
-          <Form.Text className="text-muted">
-            Or type a new category:
-          </Form.Text>
-          <Form.Control
             type="text"
-            placeholder="e.g. Action-Adventure"
+            placeholder="Enter or select a category"
+            list="category-options"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           />
+          <datalist id="category-options">
+            {existingCategories.map(cat => (
+              <option key={cat} value={cat} />
+            ))}
+          </datalist>
         </Form.Group>
         <Form.Group controlId="formMovieRating">
           <Form.Label>Rating</Form.Label>
