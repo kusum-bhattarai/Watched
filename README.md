@@ -4,9 +4,11 @@ A React-based movie library app that lets users explore movies, view details, an
 
 ## Features
 - Search and browse movies, including popular and trending titles.
+- Add movies/series under custom categories with personalized ratings and descriptions so that you can always remember how you felt when you watched the movie/series.
 - View detailed movie information, including ratings, descriptions, and streaming providers.
-- Add your own rating and a short description for the movie/series so that you can always remember how you felt when you watched the movie/series.
 - Persistent storage using `localStorage` for user convenience.
+
+Visit this link for [Live App](https://watched-theta.vercel.app/). 
 
 To try it out on your own device:
 
@@ -46,9 +48,7 @@ To try it out on your own device:
 
 ## Future Improvements
 - Add user authentication to sync saved movies across devices.
-- Add a backend to store user data and make it a full stack app.
-- Hopefully incorporate a recommendation engine and host the fully functional app.
-- Enhance the UI with animations and additional styling.
+- Add a database to store user data.
 
 ## Contributing
 Contributions are welcome!  
