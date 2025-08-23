@@ -27,7 +27,7 @@ const Home = () => {
   const isLibraryEmpty = movies.length === 0 && series.length === 0;
 
   return (
-    <Container className="content-container">
+    <Container fluid className="content-container">
       {isLibraryEmpty ? (
         <Alert variant="info" className="text-center">
           <h3>Your library is empty!</h3>

@@ -22,7 +22,7 @@ const CategoryPage = () => {
   };
 
   return (
-    <Container className="mt-5">
+    <Container fluid className="mt-5">
       <h2>{decodeURIComponent(categoryName)}</h2>
       <MovieList movies={movies} onRemove={handleRemove} />
     </Container>
