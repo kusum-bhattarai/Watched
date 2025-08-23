@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container } from 'react-bootstrap';
+import { Container, Alert } from 'react-bootstrap';
 import MovieList from '../components/movieList';
 
 const Home = () => {
@@ -24,12 +24,23 @@ const Home = () => {
     setSeries(newAllItems.filter(item => item.media_type === 'tv'));
   };
 
+  const isLibraryEmpty = movies.length === 0 && series.length === 0;
+
   return (
     <Container className="content-container">
-      <h2>Movies</h2>
-      <MovieList movies={movies} onRemove={handleRemove} />
-      <h2>Series</h2>
-      <MovieList movies={series} onRemove={handleRemove} />
+      {isLibraryEmpty ? (
+        <Alert variant="info" className="text-center">
+          <h3>Your library is empty!</h3>
+          <p>Add the movies and series you've watched using the "Add New" button in the navigation bar.</p>
+        </Alert>
+      ) : (
+        <>
+          <h2>Movies</h2>
+          <MovieList movies={movies} onRemove={handleRemove} />
+          <h2>Series</h2>
+          <MovieList movies={series} onRemove={handleRemove} />
+        </>
+      )}
     </Container>
   );
 };
